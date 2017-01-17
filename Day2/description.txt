@@ -1,1 +1,4 @@
 This is a sample implementation of a pet management program. using OOP concepts.
+All animals that live in a house are pets they all have properties such as name, age and their health status.
+The parent class is the Pet class and  all the child classes (Dog, Cat and Fish ) inherit from it.
+A method in the Dog and Cat class share a name but different functionality.
