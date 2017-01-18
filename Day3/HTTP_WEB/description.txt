@@ -1,0 +1,5 @@
+The http_web file is a simple program that consumes a public API with the url
+http://services.groupkt.com/country/get/all
+The API is a free RESTful API to be used for testing and therefore does not require authentication.
+The module urllib.request for python 3 is used to handle the API url.
+The API responds with all countries with their codes which are displayed on the console formated by JSON's pprint.
