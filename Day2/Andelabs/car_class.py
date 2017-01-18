@@ -27,9 +27,13 @@ class Car (object):
   def drive (self,moving_speed):
     if self.car_type =='trailer':
       self.speed = 77
+    else:
+      pass
       
     if self.name=='Mercedes':
       self.speed = 10**moving_speed
+    else:
+      pass
     
     return self
     
