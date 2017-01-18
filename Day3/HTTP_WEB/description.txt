@@ -3,3 +3,11 @@ http://services.groupkt.com/country/get/all
 The API is a free RESTful API to be used for testing and therefore does not require authentication.
 The module urllib.request for python 3 is used to handle the API url.
 The API responds with all countries with their codes which are displayed on the console formated by JSON's pprint.
+
+
+HOW TO RUN
+The script has been written using python 3 (hence the use of 'from urllib.request import urlopen' in the headers; in python 2 the statement would have been 'from urllib2 import urlopen' )
+-save file
+-ensure you have python 3 installed.
+-open command window from the location of the file 
+-run the file (ie $ python http_web.py) 
