@@ -29,7 +29,14 @@ class KanbanApp(cmd.Cmd):
     def do_done(self, task_id):
         conn = sqlite3.connect('kanban_app.db')
         c = conn.cursor()
-        c.execute("UPDATE task SET stage = ?, end_time = ? WHERE task_id = ?", ("done",datetime.now(), task_id))
+        c.execute("SELECT stage FROM task WHERE task_id = ?",task_id)
+        check_id = c.fetchone()
+        if check_id[0]=="todo":
+            print(colored.magenta("This item is in the todo section, It has to pass through the doing section before it can be considered done."))
+        elif check_id[0]=="done":
+            print(colored.magenta("Task has already been done"))
+        else:
+            c.execute("UPDATE task SET stage = ?, end_time = ? WHERE task_id = ?", ("done",datetime.now(), task_id))
         conn.commit()
         conn.close()
 
@@ -70,15 +77,30 @@ class KanbanApp(cmd.Cmd):
     def do_list_all(self):
         conn = sqlite3.connect('kanban_app.db')
         c = conn.cursor()
-        c.execute('SELECT task_name FROM task WHERE stage=?', ['todo'])
+        c.execute('SELECT task_id,task_name FROM task WHERE stage=?', ['todo'])
         todo_tasks = c.fetchall()
-        c.execute('SELECT  task_name FROM task WHERE stage=?', ['doing'])
+        c.execute('SELECT  task_id,task_name FROM task WHERE stage=?', ['doing'])
         doing_tasks = c.fetchall()
-        c.execute('SELECT  task_name FROM task WHERE stage=?', ['done'])
+        c.execute('SELECT  task_id,task_name FROM task WHERE stage=?', ['done'])
         done_tasks = c.fetchall()
 
         print(colored.red(todo_tasks), colored.yellow(doing_tasks), colored.cyan(done_tasks))
 
+    def do_del(self, task_id):
+        conn = sqlite3.connect('kanban_app.db')
+        c = conn.cursor()
+        c.execute("DELETE FROM task WHERE task_id=?",[task_id])
+        conn.commit()
+        conn.close()
+
+
+    def do_edit(self, task_id):
+        conn = sqlite3.connect('kanban_app.db')
+        c = conn.cursor()
+        new_task = input("Please input the new task name: ")
+        c.execute("UPDATE task SET task_name = ? WHERE task_id = ?", (new_task, task_id))
+        conn.commit()
+        conn.close()
 
     def do_EOF(self, line):
         return True
