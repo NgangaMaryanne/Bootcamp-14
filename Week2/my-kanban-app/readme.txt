@@ -1,9 +1,11 @@
 running instructions:
+-clone the git folder Week2/Kanban_App
+-install all the requirements in the requirements.txt using pip install -r /path/to/requirements.txt
+-Run the file kanban_app.py
 
--Install python 3
--Run the python script on the command prompt. you will see a Cmd appear at the command prompt
-	issue the command: todo
--This command allows you to add a few items to the tasks table in the database.
--Thats it.
+More Details:
+-There are four files:
+-kanban_app.db which is an sqlite3 database file.
+-kanban_app.py which is a python script.
+-Requirements.txt - Which is a list of all the required libraries and modules.
 
--More changes coming soon.
