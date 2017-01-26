@@ -26,6 +26,7 @@ class KanbanApp(cmd.Cmd, object):
         c.execute("INSERT INTO task VALUES(NULL,?,?,?,? );", (item_name, "todo", str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 0))
         conn.commit()
         conn.close()
+        print colored.green ("Task added successfully")
 
     def do_doing(self, task_id):
         conn = sqlite3.connect('kanban_app.db')
@@ -34,6 +35,7 @@ class KanbanApp(cmd.Cmd, object):
         c.execute("UPDATE task SET stage = ?, start_time = ? WHERE task_id = ?", ("doing", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), task_id))
         conn.commit()
         conn.close()
+        print colored.green("Task moved to doing section")
 
     def do_done(self, task_id):
         conn = sqlite3.connect('kanban_app.db')
@@ -49,6 +51,7 @@ class KanbanApp(cmd.Cmd, object):
             c.execute("UPDATE task SET stage = ?, end_time = ? WHERE task_id = ?", ("done",str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), task_id))
         conn.commit()
         conn.close()
+        print colored.green('Task completed')
 
     @staticmethod
     def do_list_todo(self):
@@ -109,7 +112,7 @@ class KanbanApp(cmd.Cmd, object):
         c = conn.cursor()
         c.execute('SELECT task_id,task_name FROM task WHERE stage=?', ['todo'])
         todo_tasks_results = c.fetchall()
-        c.execute('SELECT  task_id,task_name, start_time FROM task WHERE stage=?', ['doing'])
+        c.execute('SELECT task_id,task_name, start_time FROM task WHERE stage=?', ['doing'])
         doing_tasks_results = c.fetchall()
         c.execute('SELECT  task_id,task_name, start_time, end_time FROM task WHERE stage=?', ['done'])
         done_tasks_results = c.fetchall()
@@ -136,65 +139,106 @@ class KanbanApp(cmd.Cmd, object):
         #format data for table.
         all_tasks = []
 
-
-        if len(todo_tasks)>=len(doing_tasks) and len(todo_tasks)>len(done_tasks):
+        #check whether all lists are equal
+        if len(todo_tasks)==len(doing_tasks)==len(done_tasks):
             for index, value in enumerate(todo_tasks):
-                if index <len(doing_tasks) and index < len(done_tasks):
-                    all_tasks.append([value, doing_tasks[index], done_tasks[index]])
-                elif index <len(doing_tasks) and index >len(done_tasks):
-                    all_tasks.append([value, doing_tasks[index], ''])
-                elif index >=len(doing_tasks) and index<len(done_tasks):
-                    all_tasks.append([value,'',done_tasks[index]])
+                all_tasks.append([value,doing_tasks[index], done_tasks[index]])
+
+        elif (len(todo_tasks)==len(doing_tasks)!=len(done_tasks)) or(len(todo_tasks)==len(done_tasks)!=len(doing_tasks)) or (len(doing_tasks)==len(done_tasks)!=len(todo_tasks)) :
+            if len(todo_tasks)==len(doing_tasks)!=len(done_tasks):
+                if len(todo_tasks)<len(done_tasks):
+                    for index, value in enumerate(done_tasks):
+                        if index< len (todo_tasks):
+                            all_tasks.append([todo_tasks[index], doing_tasks[index],value])
+                        else:
+                            all_tasks.append(['','',value])
                 else:
-                    all_tasks.append([value, '',''])
+                    for index, value in enumerate(todo_tasks):
+                        if index<len(done_tasks):
+                            all_tasks.append([value, doing_tasks[index],done_tasks[index]])
+                        else:
+                            all_tasks.append([value, doing_tasks[index], ''])
 
-
-        if len(doing_tasks)>len(todo_tasks) and len(doing_tasks)>=len(done_tasks):
-            for index, value in enumerate(doing_tasks):
-                if index < len(todo_tasks) and index <len(done_tasks):
-                    all_tasks.append([todo_tasks[index],value , done_tasks[index]])
-                elif index <len(todo_tasks) and index >=len(done_tasks):
-                    all_tasks.append([todo_tasks[index], value, ''])
-                elif index >len (todo_tasks) and index <len(done_tasks):
-                    all_tasks.append(['', value, done_tasks[index]])
+            elif len(todo_tasks)==len(done_tasks)!=len(doing_tasks):
+                if len(todo_tasks)<len(doing_tasks):
+                    for index, value in enumerate(doing_tasks):
+                        if index<len(done_tasks):
+                            all_tasks.append([todo_tasks[index],value,done_tasks[index]])
+                        else:
+                            all_tasks.append(['', value, ''])
                 else:
-                    all_tasks.append(['',value,''])  
+                    for index, value in enumerate(todo_tasks):
+                        if index<len(doing_tasks):
+                            all_tasks.append([value, doing_tasks[index],done_tasks[index] ])
+                        else:
+                            all_tasks.append([value, '', done_tasks[index]])
 
-        if len(done_tasks)>=len(todo_tasks) and len(done_tasks)>len(doing_tasks):
-            for index, value in enumerate(done_tasks):
-                if index < len(todo_tasks) and index < len(doing_tasks):
-                    all_tasks.append([todo_tasks[index], doing_tasks[index], value])
-                elif index < len(todo_tasks) and index > len(doing_tasks):
-                    all_tasks.append([todo_tasks[index],'',value])
-                elif index >=len (todo_tasks) and index < len (doing_tasks):
-                    all_tasks.append(['',doing_tasks[index], value])
+            elif len(doing_tasks)==len(done_tasks)!=len(todo_tasks):
+                if len(doing_tasks)< len(todo_tasks):
+                    for index, value in enumerate(todo_tasks):
+                        if index<len(doing_tasks):
+                            all_tasks.append([value,doing_tasks[index],done_tasks[index]])
+                        else:
+                            all_tasks.append([value, '', ''])
                 else:
-                    all_tasks.append(['','', value]) 
-        '''
-        elif len(todo_tasks)==len(doing_tasks) and len(todo_tasks)!=len(done_tasks):
-            for index, value in enumerate (done_tasks):
-                if index< len(done_tasks):
-                    all_tasks.append([value, doing_tasks[index], done_tasks[index]])
+                    for index, value in enumerate(doing_tasks):
+                        if index<len(todo_tasks):
+                            all_tasks.append([todo_tasks[index], value, done_tasks[index]])
+                        else:
+                            all_tasks.append(['',value, done_tasks[index]])
 
-                else:
-                    all_tasks.append([value, doing_tasks[index], ''])
+        else:
+            listlengths = [len(todo_tasks), len(doing_tasks),len(done_tasks)]
 
-        elif len(todo_tasks)==len(done_tasks) and len(todo_tasks)!=len(doing_tasks):
-            for index, value in enumerate(todo_tasks):
-                if index< len(doing_tasks):
-                    all_tasks.append([value, doing_tasks[index], done_tasks[index]])
+            #returns index of longer list with o for todo_tasks, 1 for doing_tasks and 2 for done_tasks
+            longer_list= max(listlengths)
 
-                else:
-                    all_tasks.append([value, '', done_tasks[index]])
+            if longer_list == 0:
+                for index, value in enumerate(todo_tasks):
+                    if index<=len(doing_tasks) and index<=len(done_tasks):
+                        all_tasks.append([value, doing_tasks[index], done_tasks[index]])
+                    elif index<len(doing_tasks) and index>=len(done_tasks):
+                        all_tasks.append([value,doing_tasks[index], ''])
+                    elif index >=len(doing_tasks) and index<len(done_tasks):
+                        all_tasks.append([value, '', done_tasks[index]])
+                    elif index >=len(doing_tasks)and index>=len(done_tasks):
+                        all_tasks.append([value, '',''])
+                    else:
+                        print 'no'
 
-        elif len(doing_tasks) == len(done_tasks) and len(doing_tasks) != len(todo_tasks):
-            for index, value in enumerate (doing_tasks):
-                if index<len(todo_tasks):
-                    all_tasks.append([todo_tasks[index], value, done_tasks[index]])
-                else:
-                    all_tasks.append(['', value, done_tasks[index]])
 
-        '''
+            elif longer_list ==1:
+                for index, value in enumerate(doing_tasks):
+                    if index<=len(todo_tasks) and index<=len(done_tasks):
+                        all_tasks.append([todo_tasks[index], value, done_tasks[index]])
+                    elif index<len(todo_tasks) and index >= len(done_tasks):
+                        all_tasks.append([todo_tasks[index], value, ''])
+                    elif index >= len(todo_tasks) and index< len(done_tasks):
+                        all_tasks.append(['', value, done_tasks[index]])
+                    elif index>= len(todo_tasks) and index>= len(done_tasks):
+                        all_tasks.append(['', value, ''])
+                    else:
+                        print 'no no'
+
+            else:
+                for index, value in enumerate (done_tasks):
+                    if index<len(todo_tasks) and index<len(doing_tasks):
+                        all_tasks.append([todo_tasks[index], doing_tasks[index], value])
+                    elif index<len(todo_tasks) and index>=len(doing_tasks):
+                        all_tasks.append([todo_tasks[index], '', value])
+                    elif index>=len(todo_tasks) and index<len(doing_tasks):
+                        all_tasks.append(['', doing_tasks[index], value])
+                    elif index>=len(todo_tasks) and index>=len(doing_tasks):
+                        all_tasks.append (['','', value])
+                    else:
+                        print 'no no no'
+
+
+    
+
+
+
+    
 
 
         #CREATE DISPLAY TABLE
