@@ -14,4 +14,30 @@ The application allows a user to do the following:
 
 
 ##GETTING STARTED
-###Prerequisites
+###pPREREQUISITES
+This application has been made with the following Technologies and libraries:
+* Python 2.7
+* PrettyTable - A tool that helps with creation of console tables.
+* Clint - A user interface module. which has been used to display in color.
+* sqlite3 - Application data has been persisted in sqlite 3
+
+###HOW TO INSTALL
+####Clone this repository using:
+_$git clone https://github.com/NgangaMaryanne/Bootcamp-14.git_
+####Setup a virtual environment in your local computer.
+####pip install all the requirements in the requirements.txt
+_pip install -r requirements.txt_
+####Navigate to the root folder of the cloned repo:
+_cd /path/to/Bootcamp-14
+####Navigate to the project folder
+_cd Week2/my-kanban-app
+####Run the application
+_$python kanban_app.py_
+
+
+###COMMAND LINE HELP
+Kanban app uses CMD so after running kanban_app.py, it allows you to enter commands to interact with the app.
+Type help to see list of all commands and their descriptions.
+
+
+
