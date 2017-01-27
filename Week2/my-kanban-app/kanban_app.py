@@ -57,7 +57,7 @@ class KanbanApp(cmd.Cmd, object):
         #for command, desc in zip(command_list, description):
             #print colored.yellow (command + " "+ "->" + desc)
 
-    def do_todo(self, item_name):
+    def do_todo(self, line):
         conn = sqlite3.connect('kanban_app.db')
         conn.text_factory = str
         c = conn.cursor()
@@ -337,8 +337,9 @@ class KanbanApp(cmd.Cmd, object):
         print colored.green("Doing section has start time of the task, date and time. Done section has task start time and task end time respectively.")
         #CREATE DISPLAY TABLE
         t = PrettyTable()
-        t.field_names = ["TO DO", "DOING", "DONE"]
+        t.field_names = [colored.red("TO DO"), colored.cyan("DOING"),colored.green("DONE")]
         for i in all_tasks:
+
             t.add_row(i)
         print t
                 
